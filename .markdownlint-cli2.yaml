@@ -1,0 +1,10 @@
+ignores:
+  - ".serena/**"
+  - ".superpowers/**"
+
+config:
+  MD013:
+    line_length: 120
+    tables: false      # table rows are exempt (can't control column widths)
+    code_blocks: false # code examples are exempt
+    # strict: false (default) already exempts lines with no possible wrap point (bare URLs)

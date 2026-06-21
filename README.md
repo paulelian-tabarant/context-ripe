@@ -18,4 +18,5 @@ This project tracks skill invocation events across teams, providing:
 - **Usage rankings**: identify most and least-used skills over time
 - **Deprecation signals**: detect unused skills that may need attention
 
-Focus is on custom `.claude/skills/` defined within projects — the skills teams maintain themselves — not third-party plugins.
+Focus is on custom `.claude/skills/` defined within projects — the skills teams maintain themselves
+— not third-party plugins.
