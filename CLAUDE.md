@@ -4,17 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Project Is
 
-A telemetry system for tracking custom skill invocations in Claude Code projects. A CLI client (`telemetry-client`) runs via the `SessionEnd` hook, parses the session transcript, and POSTs events to a Fastify server. A React dashboard displays skill usage rankings.
+A telemetry system for tracking custom skill invocations in Claude Code projects. A CLI client (`ripe`) runs via the `SessionEnd` hook, parses the session transcript, and POSTs events to a Fastify server. A React dashboard displays skill usage rankings.
 
 ## Repository Status
 
-Currently in **spec/planning phase** — no application code exists yet. Specs live in `docs/superpowers/specs/`, ADRs in `docs/architecture/decisions/`. Implementation plans go in `docs/superpowers/plans/`.
+Currently in **spec/planning phase** — no application code exists yet. User stories live in `docs/spec/user-stories/`, ADRs in `docs/architecture/decisions/`. Implementation plans go in `docs/plans/`.
 
 ## Planned Package Structure (pnpm workspace)
 
 When code lands, it will be organized as three packages:
 
-- `client/` — CLI script (`telemetry-client init` and `telemetry-client sync`)
+- `client/` — CLI script (`ripe init` and `ripe sync`)
 - `server/` — Fastify + SQLite backend
 - `web/` — React + Vite SPA, served as static files by the server in production
 
@@ -52,11 +52,3 @@ Each package will have its own `npm run test` (Vitest) and `npm run typecheck`.
 ## Deployment
 
 Railway Hobby plan. Two services: staging (auto-deploys on merge to `main`, database resets each deploy) and production (manual trigger from Railway dashboard). Main branch is protected. CI on every push runs lint, type checks, and tests.
-
-## Key Specs
-
-- `docs/superpowers/specs/2026-06-21-us-0.1-walking-skeleton.md` — first deliverable
-- `docs/superpowers/specs/2026-06-21-us-1.1-project-registration.md` — `telemetry-client init`
-- `docs/superpowers/specs/2026-06-21-us-2.1-skill-registration.md` — Phase 1 of `sync`
-- `docs/superpowers/specs/2026-06-21-us-2.2-event-submission.md` — Phase 2 of `sync`
-- `docs/superpowers/specs/2026-06-21-us-3.1-activity-dashboard.md` — the dashboard

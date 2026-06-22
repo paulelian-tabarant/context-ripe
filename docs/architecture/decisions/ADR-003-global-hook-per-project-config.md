@@ -15,7 +15,7 @@ We need to decide where telemetry is enabled. Key constraints:
 ## Decision
 
 - Install telemetry hook once in `~/.claude/settings.json` (global)
-- Each project opts in by running `telemetry-client init` (per-project, manual)
+- Each project opts in by running `ripe init` (per-project, manual)
 - The client exposes two commands: `init` (manual, one-time) and `sync` (automatic, hook-driven)
 
 ## Implementation
@@ -26,14 +26,14 @@ We need to decide where telemetry is enabled. Key constraints:
   "hooks": {
     "SessionEnd": [
       {
-        "command": "<telemetry-client> sync"
+        "command": "ripe sync"
       }
     ]
   }
 }
 ```
 
-**`telemetry-client init`** — run once manually per project:
+**`ripe init`** — run once manually per project:
 
 1. Calls `POST /api/projects` to register the project with the server
 2. Server assigns a stable `project_id` and returns it
@@ -42,13 +42,13 @@ We need to decide where telemetry is enabled. Key constraints:
 The server URL is provided to `init` at call time (exact mechanism TBD — flag, env var, or prompted
 input). The `sync` command reads it from the same local cache.
 
-**`telemetry-client sync`** — invoked automatically by the `SessionEnd` hook:
+**`ripe sync`** — invoked automatically by the `SessionEnd` hook:
 
 1. Reads `project_id` and server URL from the local cache
 2. Registers any new skills via `POST /api/skills` (Phase 1)
 3. Submits invocation events via `POST /api/events` (Phase 2)
 
-**Script location**: `~/.local/bin/<telemetry-client>` (consistent with other user tools like `serena-hooks`; name TBD)
+**Script location**: `~/.local/bin/ripe` (consistent with other user tools like `serena-hooks`)
 
 - Referenced by name in hook (no path needed if `~/.local/bin` is in PATH)
 - Installation documented in README — no automated installer for MVP
