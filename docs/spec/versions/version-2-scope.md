@@ -29,6 +29,27 @@ data spanning several weeks is required in the test environment.
 
 ---
 
+---
+
+## Feature: Standalone Deployable Distribution
+
+Make the server and dashboard self-hostable — users can deploy Context Ripe to their own infrastructure
+instead of relying on the hosted version.
+
+**Changes**:
+
+- **Docker image**: single image containing the server + compiled frontend assets, exposed on a configurable port
+- **Environment-based configuration**: database path, port, CORS origins configurable via env vars (no hardcoded Railway URLs)
+- **Documentation**: deployment guide covering Docker run, docker-compose, and common PaaS platforms (Fly.io, Railway, Render)
+- **Health check endpoint**: `GET /health` for orchestrators and uptime monitors
+
+**Why**: lowers barrier to adoption for teams with data residency requirements, on-prem mandates, or who prefer self-hosting.
+The hosted version remains the default/recommended option for most users.
+
+**Testing note**: verify the Docker image boots cleanly, serves the frontend, and handles requests with a SQLite file mounted as a volume.
+
+---
+
 ## Deferred from V1 (still under consideration for V2+)
 
 - Per-developer breakdown: which team members are using which skills

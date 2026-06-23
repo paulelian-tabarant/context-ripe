@@ -1,4 +1,4 @@
-# Observabilité Usages Coding Agents
+# Context Ripe
 
 **Visibility into which custom skills are actually being used by your coding agent teams.**
 
