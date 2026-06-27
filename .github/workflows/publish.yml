@@ -28,9 +28,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Build CLI
-        run: pnpm --filter cli build
+        run: pnpm --filter ./cli build
 
       - name: Publish @paulelian-tabarant/ripe
-        run: pnpm --filter cli publish --no-git-checks
+        run: pnpm --filter ./cli publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
