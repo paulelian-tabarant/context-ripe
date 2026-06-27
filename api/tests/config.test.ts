@@ -13,9 +13,9 @@ describe('loadConfig', () => {
     expect(loadConfig()).toEqual({ databasePath: '/tmp/test.db', port: 4000 });
   });
 
-  it('uses port 3000 when PORT is not set', () => {
+  it('throws when PORT is not set', () => {
     process.env['DATABASE_PATH'] = '/tmp/test.db';
-    expect(loadConfig().port).toBe(3000);
+    expect(() => loadConfig()).toThrow('PORT');
   });
 
   it('throws when DATABASE_PATH is missing', () => {
