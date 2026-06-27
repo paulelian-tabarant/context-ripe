@@ -3,7 +3,6 @@ import Database from 'better-sqlite3';
 import { initializeSchema } from '../../src/db/schema.js';
 import {
   findProjectByName,
-  projectExistsByName,
   insertProject,
 } from '../../src/repositories/projectRepository.js';
 
@@ -18,17 +17,6 @@ describe('projectRepository', () => {
 
   beforeEach(() => {
     db = buildTestDb();
-  });
-
-  describe('projectExistsByName', () => {
-    it('returns false when project does not exist', () => {
-      expect(projectExistsByName(db, 'my-project')).toBe(false);
-    });
-
-    it('returns true after project is inserted', () => {
-      insertProject(db, { id: 'proj_abc', name: 'my-project' });
-      expect(projectExistsByName(db, 'my-project')).toBe(true);
-    });
   });
 
   describe('findProjectByName', () => {
