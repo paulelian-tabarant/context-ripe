@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { runInit } from './commands/runInit.js';
 
-const [, , command, ...args] = process.argv;
+const [, , command, ...args]: string[] = process.argv;
 
 async function main(): Promise<void> {
   if (command === 'init') {

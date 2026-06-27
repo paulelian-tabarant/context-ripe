@@ -1,6 +1,6 @@
 import type Database from 'better-sqlite3';
 
-export type ProjectRow = {
+export type Project = {
   id: string;
   name: string;
 };
@@ -8,13 +8,13 @@ export type ProjectRow = {
 export class ProjectRepository {
   constructor(private readonly db: Database.Database) {}
 
-  findByName(name: string): ProjectRow | undefined {
+  findByName(name: string): Project | undefined {
     return this.db
-      .prepare<[string], ProjectRow>('SELECT id, name FROM projects WHERE name = ?')
+      .prepare<[string], Project>('SELECT id, name FROM projects WHERE name = ?')
       .get(name);
   }
 
-  insert(project: ProjectRow): void {
+  insert(project: Project): void {
     this.db
       .prepare('INSERT INTO projects (id, name) VALUES (?, ?)')
       .run(project.id, project.name);

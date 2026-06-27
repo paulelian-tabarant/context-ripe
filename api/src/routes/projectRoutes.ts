@@ -1,4 +1,4 @@
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync, FastifyInstance } from 'fastify';
 import type { ProjectService } from '../services/ProjectService.js';
 
 interface ProjectRouteOptions {
@@ -16,7 +16,10 @@ const projectSchema = {
   },
 } as const;
 
-export const projectRoutes: FastifyPluginAsync<ProjectRouteOptions> = async (app, opts) => {
+export const projectRoutes: FastifyPluginAsync<ProjectRouteOptions> = async (
+  app: FastifyInstance,
+  opts: ProjectRouteOptions,
+): Promise<void> => {
   app.post<{ Body: { name: string } }>(
     '/api/projects',
     { schema: projectSchema },
