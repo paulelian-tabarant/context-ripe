@@ -1,6 +1,7 @@
 .idea
 .serena
 node_modules
+.pnpm-store
 .env
 dist/
 *.db
