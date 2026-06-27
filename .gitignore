@@ -1,3 +1,7 @@
 .idea
 .serena
 node_modules
+.env
+dist/
+*.db
+.ripe/cache.json
