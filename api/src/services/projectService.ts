@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import type Database from 'better-sqlite3';
-import { findProjectByName, insertProject } from '../repositories/projectRepository.js';
+import { findProjectByName, projectExistsByName, insertProject } from '../repositories/projectRepository.js';
 
 export type ProjectResult =
   | { created: true; projectId: string }
@@ -15,16 +15,9 @@ export function registerProject(db: Database.Database, name: string): ProjectRes
   try {
     insertProject(db, { id: projectId, name });
     return { created: true, projectId };
-  } catch (err: unknown) {
-    if (
-      err instanceof Error &&
-      'code' in err &&
-      (err as { code: string }).code === 'SQLITE_CONSTRAINT_UNIQUE'
-    ) {
-      const race = findProjectByName(db, name);
-      if (!race) throw err;
-      return { created: false, projectId: race.id };
-    }
+  } catch (err) {
+    const race = findProjectByName(db, name);
+    if (race) return { created: false, projectId: race.id };
     throw err;
   }
 }

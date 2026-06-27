@@ -14,6 +14,10 @@ export function findProjectByName(
     .get(name);
 }
 
+export function projectExistsByName(db: Database.Database, name: string): boolean {
+  return db.prepare('SELECT 1 FROM projects WHERE name = ?').get(name) !== undefined;
+}
+
 export function insertProject(db: Database.Database, project: ProjectRow): void {
   db.prepare('INSERT INTO projects (id, name) VALUES (?, ?)').run(project.id, project.name);
 }
