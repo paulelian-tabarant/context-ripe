@@ -1,8 +1,9 @@
-# ADR-016: Environment Configuration Strategy
+# ADR-013: Environment Configuration Strategy
 
 **Status**: Accepted  
 **Date**: 2026-06-27  
-**Deciders**: Single developer MVP
+**Deciders**: Single developer MVP  
+**Related**: [ADR-010](ADR-010-deployment-environments.md) defines the environments this strategy configures
 
 ## Context
 
