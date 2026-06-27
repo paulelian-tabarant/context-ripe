@@ -1,11 +1,11 @@
-import type { FastifyPluginAsync, FastifyInstance } from 'fastify';
+import type {FastifyPluginAsync, FastifyInstance, FastifySchema} from 'fastify';
 import type { ProjectService } from '../services/ProjectService.js';
 
 interface ProjectRouteOptions {
   projectService: ProjectService;
 }
 
-const projectSchema = {
+const projectSchema: FastifySchema = {
   body: {
     type: 'object',
     required: ['name'],

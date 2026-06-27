@@ -1,14 +1,14 @@
 import { nanoid } from 'nanoid';
 import type { ProjectRepository } from '../repositories/ProjectRepository.js';
 
-export type ProjectResult =
+export type RegisterProjectResult =
   | { created: true; projectId: string }
   | { created: false; projectId: string };
 
 export class ProjectService {
   constructor(private readonly repository: ProjectRepository) {}
 
-  registerProject(name: string): ProjectResult {
+  registerProject(name: string): RegisterProjectResult {
     const existing = this.repository.findByName(name);
 
     if (existing) {

@@ -37,7 +37,7 @@ describe('runInit', () => {
     mkdirSync(join(tmpDir, '.ripe'), { recursive: true });
     writeFileSync(join(tmpDir, '.ripe/config.json'), '{}');
 
-    const result = await runInit('http://localhost:3000', { cwd: tmpDir });
+    const result = await runInit('http://localhost:3000', { currentDirectoryName: tmpDir });
 
     expect(result.exitCode).toBe(0);
     expect(warnSpy).toHaveBeenCalledWith(
@@ -50,7 +50,7 @@ describe('runInit', () => {
       .post('/api/projects', { name: tmpDir.split('/').pop() })
       .reply(201, { projectId: 'proj_abc123' });
 
-    const result = await runInit('http://localhost:3000', { cwd: tmpDir });
+    const result = await runInit('http://localhost:3000', { currentDirectoryName: tmpDir });
 
     expect(result.exitCode).toBe(0);
 
@@ -68,7 +68,7 @@ describe('runInit', () => {
       .reply(409, { projectId: 'proj_existing', message: 'Project already exists' });
 
     const result = await runInit('http://localhost:3000', {
-      cwd: tmpDir,
+      currentDirectoryName: tmpDir,
       promptFn: async () => true,
     });
 
@@ -87,7 +87,7 @@ describe('runInit', () => {
       .reply(409, { projectId: 'proj_existing', message: 'Project already exists' });
 
     const result = await runInit('http://localhost:3000', {
-      cwd: tmpDir,
+      currentDirectoryName: tmpDir,
       promptFn: async () => false,
     });
 
@@ -100,7 +100,7 @@ describe('runInit', () => {
       .post('/api/projects')
       .replyWithError('connect ECONNREFUSED 127.0.0.1:3000');
 
-    const result = await runInit('http://localhost:3000', { cwd: tmpDir });
+    const result = await runInit('http://localhost:3000', { currentDirectoryName: tmpDir });
 
     expect(result.exitCode).toBe(1);
     expect(errorSpy).toHaveBeenCalled();

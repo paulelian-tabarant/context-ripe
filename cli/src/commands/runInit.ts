@@ -5,7 +5,7 @@ import { type ProjectRegistrationResult, registerProject } from '../lib/register
 import { writeConfig } from '../lib/writeConfig.js';
 
 export interface InitOptions {
-  cwd?: string;
+  currentDirectoryName?: string;
   promptFn?: (question: string) => Promise<boolean>;
 }
 
@@ -24,16 +24,17 @@ export async function runInit(
   serverUrl: string,
   options: InitOptions = {}
 ): Promise<{ exitCode: 0 | 1 }> {
-  const cwd = options.cwd ?? process.cwd();
+  const currentDirectoryName = options.currentDirectoryName ?? process.cwd();
   const promptFn = options.promptFn ?? defaultPromptFn;
-  const configPath = join(cwd, '.ripe/config.json');
+  const configPath = join(currentDirectoryName, '.ripe/config.json');
 
   if (existsSync(configPath)) {
     console.warn('.ripe/config.json already exists — project is already registered.');
+
     return { exitCode: 0 };
   }
 
-  const defaultProjectName = basename(cwd);
+  const defaultProjectName = basename(currentDirectoryName);
 
   let result: ProjectRegistrationResult;
   try {
