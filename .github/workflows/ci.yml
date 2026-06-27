@@ -24,11 +24,17 @@ jobs:
       - name: Lint markdown
         run: pnpm lint:md
 
+      - name: Lint api
+        run: pnpm --filter api lint
+
       - name: Typecheck api
         run: pnpm --filter api typecheck
 
+      - name: Lint cli
+        run: pnpm --filter ./cli lint
+
       - name: Typecheck cli
-        run: pnpm --filter cli typecheck
+        run: pnpm --filter ./cli typecheck
 
       - name: Test api
         run: pnpm --filter api test
@@ -36,4 +42,4 @@ jobs:
           DATABASE_PATH: /tmp/test.db
 
       - name: Test cli
-        run: pnpm --filter cli test
+        run: pnpm --filter ./cli test

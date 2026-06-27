@@ -18,7 +18,7 @@ Fastify server. A React dashboard displays skill usage rankings.
 
 ```bash
 pnpm --filter api test
-pnpm --filter cli test
+pnpm --filter ./cli test
 pnpm --filter web test
 pnpm test:e2e          # Playwright, from repo root
 
@@ -29,6 +29,18 @@ Each package has its own `npm run test` (Vitest) and `npm run typecheck`.
 
 After every coding task, run lint, typecheck, and the scoped tests for the package(s) you
 touched before considering the task done.
+
+At the end of every feature branch, run the full pipeline before considering it ready:
+
+```bash
+pnpm lint:md
+pnpm --filter api lint && pnpm --filter api typecheck
+pnpm --filter ./cli lint && pnpm --filter ./cli typecheck
+DATABASE_PATH=/tmp/test.db pnpm --filter api test
+pnpm --filter ./cli test
+```
+
+All checks must pass with zero errors before marking the feature complete.
 
 ## Cross-Cutting Architecture Decisions
 

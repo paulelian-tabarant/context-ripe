@@ -11,10 +11,12 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "lint": "biome lint ./src ./tests",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.1",
     "@types/node": "^22.0.0",
     "nock": "^14.0.0",
     "typescript": "^5.5.0",

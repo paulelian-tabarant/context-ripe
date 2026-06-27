@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
+npm run lint        # Biome lint (src/ and tests/)
 npm run build       # tsc -p tsconfig.build.json → dist/
 npm run test        # vitest run (all tests under tests/)
 npm run typecheck   # tsc --noEmit (includes src + tests)

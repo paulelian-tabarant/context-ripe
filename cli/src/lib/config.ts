@@ -8,5 +8,5 @@ export interface RipeConfig {
 
 export function writeConfig(configPath: string, config: RipeConfig): void {
   mkdirSync(dirname(configPath), { recursive: true });
-  writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
+  writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`, 'utf-8');
 }

@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
-import { registerProject } from '../lib/api.js';
+import { type ProjectRegistrationResult, registerProject } from '../lib/api.js';
 import { writeConfig } from '../lib/config.js';
 
 export interface InitOptions {
@@ -34,7 +34,7 @@ export async function runInit(
 
   const name = basename(cwd);
 
-  let result;
+  let result: ProjectRegistrationResult;
   try {
     result = await registerProject(serverUrl, name);
   } catch (err) {
