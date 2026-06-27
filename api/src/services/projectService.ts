@@ -12,9 +12,19 @@ export function registerProject(db: Database.Database, name: string): ProjectRes
     return { created: false, projectId: existing.id };
   }
   const projectId = `proj_${nanoid()}`;
-  const result = insertProject(db, { id: projectId, name });
-  if (result.inserted) {
+  try {
+    insertProject(db, { id: projectId, name });
     return { created: true, projectId };
+  } catch (err: unknown) {
+    if (
+      err instanceof Error &&
+      'code' in err &&
+      (err as { code: string }).code === 'SQLITE_CONSTRAINT_UNIQUE'
+    ) {
+      const race = findProjectByName(db, name);
+      if (!race) throw err;
+      return { created: false, projectId: race.id };
+    }
+    throw err;
   }
-  return { created: false, projectId: result.existingId };
 }
