@@ -12,6 +12,9 @@ export function registerProject(db: Database.Database, name: string): ProjectRes
     return { created: false, projectId: existing.id };
   }
   const projectId = `proj_${nanoid()}`;
-  insertProject(db, { id: projectId, name });
-  return { created: true, projectId };
+  const result = insertProject(db, { id: projectId, name });
+  if (result.inserted) {
+    return { created: true, projectId };
+  }
+  return { created: false, projectId: result.existingId };
 }

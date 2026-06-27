@@ -9,6 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Ensure we are on main
+        run: |
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "Production deploy must be triggered from main, got ${{ github.ref }}"
+            exit 1
+          fi
+
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 

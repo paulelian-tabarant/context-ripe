@@ -1,0 +1,11 @@
+node_modules
+dist
+*.db
+.env
+.git
+docs
+cli
+web
+.claude
+.serena
+.superpowers

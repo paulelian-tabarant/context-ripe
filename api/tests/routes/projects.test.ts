@@ -1,15 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import Database from 'better-sqlite3';
 import { buildApp } from '../../src/app.js';
 
-function buildTestApp() {
-  const db = new Database(':memory:');
-  return buildApp(db);
-}
-
 describe('POST /api/projects', () => {
+  let app: ReturnType<typeof buildApp>;
+
+  afterEach(async () => {
+    await app.close();
+  });
+
   it('returns 201 with projectId for a new project', async () => {
-    const app = buildTestApp();
+    const db = new Database(':memory:');
+    app = buildApp(db, { logger: false });
     const response = await app.inject({
       method: 'POST',
       url: '/api/projects',
@@ -20,7 +22,8 @@ describe('POST /api/projects', () => {
   });
 
   it('returns 409 with existing projectId for a duplicate name', async () => {
-    const app = buildTestApp();
+    const db = new Database(':memory:');
+    app = buildApp(db, { logger: false });
     const first = await app.inject({
       method: 'POST',
       url: '/api/projects',
@@ -37,7 +40,8 @@ describe('POST /api/projects', () => {
   });
 
   it('returns 400 for a missing name field', async () => {
-    const app = buildTestApp();
+    const db = new Database(':memory:');
+    app = buildApp(db, { logger: false });
     const response = await app.inject({
       method: 'POST',
       url: '/api/projects',
@@ -47,7 +51,8 @@ describe('POST /api/projects', () => {
   });
 
   it('returns 400 for an empty name string', async () => {
-    const app = buildTestApp();
+    const db = new Database(':memory:');
+    app = buildApp(db, { logger: false });
     const response = await app.inject({
       method: 'POST',
       url: '/api/projects',

@@ -35,10 +35,13 @@ export function registerProject(
         });
         res.on('end', () => {
           if (res.statusCode === 201 || res.statusCode === 409) {
-            const parsed = JSON.parse(data) as {
-              projectId: string;
-              message?: string;
-            };
+            let parsed: { projectId: string; message?: string };
+            try {
+              parsed = JSON.parse(data) as { projectId: string; message?: string };
+            } catch {
+              reject(new Error(`Invalid JSON response from server`));
+              return;
+            }
             resolve({
               status: res.statusCode,
               projectId: parsed.projectId,
