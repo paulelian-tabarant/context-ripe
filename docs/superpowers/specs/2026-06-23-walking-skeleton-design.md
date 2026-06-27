@@ -18,7 +18,7 @@ No frontend yet — that comes in Slice 2 (US-1.2).
 
 ## Package Structure
 
-```
+```text
 context-ripe/
 ├── cli/           # CLI package (publishable to npm)
 │   ├── src/
@@ -53,6 +53,7 @@ context-ripe/
 ```
 
 **Key points:**
+
 - Two packages: `cli/` (published to GitHub Packages as `@paulelian-tabarant/ripe`) and `api/` (backend server, not publishable)
 - No `web/` package yet (introduced in US-1.2 for the dashboard)
 - `cli/package.json` includes `"name": "@paulelian-tabarant/ripe"` and `"bin": { "ripe": "./dist/cli.js" }` for global install
@@ -78,17 +79,18 @@ During development, use `npm link` from the `cli/` directory.
 Registers the project with the telemetry server.
 
 **Behavior:**
+
 1. Check if `.ripe/config.json` exists
    - If yes: warn "Project already initialized" and exit 0
 2. Read project name from `process.cwd()` basename
 3. POST `{ name: <project-name> }` to `<server-url>/api/projects`
 4. Handle response:
    - **201 Created**: parse `projectId`, write to config, display "Project registered successfully"
-   - **409 Conflict**: prompt "Project '<name>' already exists. Do you want to use it? (y/n)"
+   - **409 Conflict**: prompt "Project '`<name>`' already exists. Do you want to use it? (y/n)"
      - On 'y': write returned `projectId` to config, display "Using existing project ID"
      - On 'n': exit 0 without writing config
-   - **Network error**: stderr "Server unreachable at <server-url>", exit 1
-   - **Other error**: stderr "Failed to register project: <status> <body>", exit 1
+   - **Network error**: stderr "Server unreachable at `<server-url>`", exit 1
+   - **Other error**: stderr "Failed to register project: `<status>` `<body>`", exit 1
 5. Exit 0
 
 ### Configuration File
@@ -96,6 +98,7 @@ Registers the project with the telemetry server.
 **Location**: `.ripe/config.json` (committed to git)
 
 **Structure** (camelCase):
+
 ```json
 {
   "serverUrl": "https://ripe-staging.railway.app",
@@ -122,7 +125,8 @@ Three-layer structure per ADR-010:
 Health check endpoint.
 
 **Response:**
-```
+
+```text
 200 OK
 { "status": "ok" }
 ```
@@ -132,6 +136,7 @@ Health check endpoint.
 Register a new project or return existing project ID.
 
 **Request body:**
+
 ```json
 { "name": "context-ripe" }
 ```
@@ -139,11 +144,13 @@ Register a new project or return existing project ID.
 **Responses:**
 
 **201 Created** (new project):
+
 ```json
 { "projectId": "proj_V1StGXR8_Z5jdHi6B" }
 ```
 
 **409 Conflict** (duplicate name):
+
 ```json
 { 
   "projectId": "proj_V1StGXR8_Z5jdHi6B",
@@ -152,6 +159,7 @@ Register a new project or return existing project ID.
 ```
 
 **400 Bad Request** (invalid body):
+
 ```json
 { "error": "Invalid request body" }
 ```
@@ -161,6 +169,7 @@ Register a new project or return existing project ID.
 List all registered projects (needed for testing and US-1.2 frontend).
 
 **Response:**
+
 ```json
 [
   { "projectId": "proj_abc123", "name": "context-ripe" },
@@ -186,6 +195,7 @@ CREATE TABLE projects (
 ### Repositories
 
 **`projectRepository.ts`**:
+
 - `insertProject(name: string): string` — inserts project, returns projectId; throws on unique constraint violation
 - `listProjects(): Array<{ projectId: string, name: string }>` — returns all projects
 
@@ -198,10 +208,12 @@ Uses `better-sqlite3` synchronous API with in-memory SQLite for tests, file-base
 Multi-stage build for Railway deployment using `pnpm deploy`:
 
 **Stage 1 (build):**
+
 - Install all workspace dependencies
 - Compile TypeScript to JavaScript for the api package
 
 **Stage 2 (production):**
+
 - Use `pnpm deploy` to create standalone api package with only production dependencies
 - Final image contains just the api package (no workspace overhead)
 - Run server with `node dist/index.js`
@@ -212,10 +224,10 @@ This produces the smallest possible production image - only the api package and 
 
 Two services under one Railway project (Hobby plan, $5/month):
 
-| Service | Purpose | Deploy trigger | Database |
-|---------|---------|----------------|----------|
-| `context-ripe-staging` | Integration testing, artificial invocations | Auto on merge to `main` + manual | Ephemeral (resets each deploy) |
-| `context-ripe` | Real daily use | Manual only | Persistent SQLite volume |
+| Service                | Purpose                                       | Deploy trigger                    | Database                       |
+| ---------------------- | --------------------------------------------- | --------------------------------- | ------------------------------ |
+| `context-ripe-staging` | Integration testing, artificial invocations   | Auto on merge to `main` + manual  | Ephemeral (resets each deploy) |
+| `context-ripe`         | Real daily use                                | Manual only                       | Persistent SQLite volume       |
 
 ### GitHub Actions Workflow
 
@@ -232,16 +244,19 @@ Two services under one Railway project (Hobby plan, $5/month):
 All jobs share pnpm cache via `actions/setup-node` with `cache: 'pnpm'`.
 
 **On merge to `main`:**
+
 - Skip checks (already validated via PR)
 - Trigger Railway staging deploy directly
 
 **Manual triggers (`workflow_dispatch`):**
+
 - **Deploy to staging from any branch**: wait for all 7 check jobs to pass, then deploy
 - **Deploy to production from `main`**: skip checks, deploy directly
 
 ### GitHub Branch Protection
 
 Protect `main` branch with:
+
 - Require PR before merging
 - Require status checks to pass: `cli-lint`, `cli-typecheck`, `cli-test`, `api-lint`, `api-typecheck`, `api-test`, `lint-md`
 - No direct pushes allowed
@@ -258,7 +273,7 @@ Mock HTTP with `nock`, test CLI behavior:
 
 - `init` with valid server → writes config with correct `serverUrl` and `projectId`
 - `init` when `.ripe/config.json` already exists → warns "Project already initialized", exits 0
-- `init` with server unreachable → stderr "Server unreachable at <url>", exits 1
+- `init` with server unreachable → stderr "Server unreachable at `<url>`", exits 1
 - `init` with duplicate project name (409):
   - User responds 'y' → writes existing `projectId` to config, displays "Using existing project ID"
   - User responds 'n' → exits 0 without writing config
@@ -274,6 +289,7 @@ Black-box HTTP tests, no direct repository testing:
 - `POST /api/projects` with invalid body → 400
 
 **Testing strategy:**
+
 - Most tests use **in-memory SQLite** (`:memory:`) for speed and isolation
 - One **file-based smoke test** verifies disk I/O works (creates `./test.db`, runs basic CRUD, cleans up)
 
@@ -304,20 +320,24 @@ From US-1.1 spec, updated based on design:
 ### Dependencies
 
 **CLI**:
+
 - Native `fetch` (Node 18+) — HTTP client (no dependencies needed)
 
 **API**:
+
 - `fastify` — HTTP framework
 - `better-sqlite3` — SQLite driver
 - `nanoid` — project ID generation
 
 **Dev dependencies (shared)**:
+
 - `@biomejs/biome` — linting and formatting
 - `vitest` — testing
 - `typescript` — type checking
 - `tsx` — dev server for TypeScript
 
 **Node version requirement:**
+
 - Node.js >= 18.0.0 (for native fetch support)
 
 ### Root Workspace Scripts
@@ -333,7 +353,8 @@ From US-1.1 spec, updated based on design:
 }
 ```
 
-Package-specific scripts (`lint`, `typecheck`, `test`) live in each workspace package's own `package.json` (`cli/`, `api/`). Run them via:
+Package-specific scripts (`lint`, `typecheck`, `test`) live in each workspace package's own
+`package.json` (`cli/`, `api/`). Run them via:
 
 ```bash
 pnpm --filter cli lint
@@ -347,6 +368,7 @@ pnpm --filter api test
 ### Migration Path
 
 When the dashboard is introduced in US-1.2:
+
 - Add `web/` package to workspace
 - API server serves SPA via `@fastify/static` at `/`
 - `GET /api/projects` endpoint already exists (built in US-1.1 for testing)
@@ -354,18 +376,27 @@ When the dashboard is introduced in US-1.2:
 
 ## Why This Design
 
-**Monorepo with publishable CLI**: Standard npm pattern; `npm install -g @paulelian-tabarant/ripe` works via GitHub Packages. Clear separation between publishable (`cli/`) and internal (`api/`) packages.
+**Monorepo with publishable CLI**: Standard npm pattern; `npm install -g @paulelian-tabarant/ripe`
+works via GitHub Packages. Clear separation between publishable (`cli/`) and internal (`api/`)
+packages.
 
-**Committed config with separate cache**: Configuration (`serverUrl`, `projectId`) is shared across team members via git. Cache (skills mapping in Slice 3) is developer-local.
+**Committed config with separate cache**: Configuration (`serverUrl`, `projectId`) is shared across
+team members via git. Cache (skills mapping in Slice 3) is developer-local.
 
-**Unique project names with 409 prompt**: Prevents accidental duplicate registrations while allowing teams to share project IDs. User-friendly CLI flow.
+**Unique project names with 409 prompt**: Prevents accidental duplicate registrations while
+allowing teams to share project IDs. User-friendly CLI flow.
 
-**Three-layer backend**: Follows ADR-010. Routes stay thin, repositories handle SQL, services are the seam for future logic (e.g., "ignore bot invocations"). E2E tests via `fastify.inject()` cover the full stack without mocking internal layers.
+**Three-layer backend**: Follows ADR-010. Routes stay thin, repositories handle SQL, services are
+the seam for future logic (e.g., "ignore bot invocations"). E2E tests via `fastify.inject()` cover
+the full stack without mocking internal layers.
 
-**Parallel CI jobs**: Lint, typecheck, and test run concurrently for fast feedback. Checks only run once (on push to PR branch), not again on merge to `main`.
+**Parallel CI jobs**: Lint, typecheck, and test run concurrently for fast feedback. Checks only run
+once (on push to PR branch), not again on merge to `main`.
 
-**Staging auto-deploy, production manual**: Safe by default. Staging validates deployments before production promotion. Manual production trigger prevents accidental releases.
+**Staging auto-deploy, production manual**: Safe by default. Staging validates deployments before
+production promotion. Manual production trigger prevents accidental releases.
 
 **Biome over ESLint + Prettier**: Faster, simpler config, all-in-one tool. Single `biome.json` replaces `.eslintrc` + `.prettierrc`.
 
-**Project ID format (`proj_` + nanoid)**: URL-safe, short, recognizable prefix. Better than raw UUIDs (shorter, clearer in logs).
+**Project ID format (`proj_` + nanoid)**: URL-safe, short, recognizable prefix. Better than raw
+UUIDs (shorter, clearer in logs).
