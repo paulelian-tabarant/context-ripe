@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-import { runInit } from './commands/init.js';
+import { runInit } from './commands/runInit.js';
 
 const [, , command, ...args] = process.argv;
 
 async function main(): Promise<void> {
   if (command === 'init') {
     const serverUrl = args[0];
+
     if (!serverUrl) {
       console.error('Usage: ripe init <server-url>');
       process.exit(1);
     }
+
     const { exitCode } = await runInit(serverUrl);
     process.exit(exitCode);
   } else {

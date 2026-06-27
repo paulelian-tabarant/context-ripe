@@ -1,5 +1,7 @@
 import type Database from 'better-sqlite3';
 
+// TODO: Use a migrations system (e.g., better-sqlite3-helper, node-pg-migrate, or Knex)
+
 export function initializeSchema(db: Database.Database): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS projects (

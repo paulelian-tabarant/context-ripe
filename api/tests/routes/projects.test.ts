@@ -17,6 +17,7 @@ describe('POST /api/projects', () => {
       url: '/api/projects',
       payload: { name: 'my-project' },
     });
+
     expect(response.statusCode).toBe(201);
     expect(response.json().projectId).toMatch(/^proj_/);
   });
@@ -34,6 +35,7 @@ describe('POST /api/projects', () => {
       url: '/api/projects',
       payload: { name: 'my-project' },
     });
+
     expect(second.statusCode).toBe(409);
     expect(second.json().projectId).toBe(first.json().projectId);
     expect(second.json().message).toBe('Project already exists');
@@ -47,6 +49,7 @@ describe('POST /api/projects', () => {
       url: '/api/projects',
       payload: {},
     });
+
     expect(response.statusCode).toBe(400);
   });
 
@@ -58,6 +61,7 @@ describe('POST /api/projects', () => {
       url: '/api/projects',
       payload: { name: '' },
     });
+
     expect(response.statusCode).toBe(400);
   });
 });

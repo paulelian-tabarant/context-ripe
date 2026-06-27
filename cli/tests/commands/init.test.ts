@@ -10,34 +10,39 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { runInit } from '../../src/commands/init.js';
+import { runInit } from '@/commands/runInit.js';
 
 describe('runInit', () => {
   let tmpDir: string;
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+  let errorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     tmpDir = mkdtempSync(join(tmpdir(), 'ripe-test-'));
     nock.cleanAll();
     nock.disableNetConnect();
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
     rmSync(tmpDir, { recursive: true, force: true });
     nock.cleanAll();
     nock.enableNetConnect();
+    warnSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 
   it('exits 0 with warning when .ripe/config.json already exists', async () => {
     mkdirSync(join(tmpDir, '.ripe'), { recursive: true });
     writeFileSync(join(tmpDir, '.ripe/config.json'), '{}');
 
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const result = await runInit('http://localhost:3000', { cwd: tmpDir });
+
     expect(result.exitCode).toBe(0);
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining('already exists')
     );
-    warnSpy.mockRestore();
   });
 
   it('creates .ripe/config.json with projectId and serverUrl on 201', async () => {
@@ -46,11 +51,13 @@ describe('runInit', () => {
       .reply(201, { projectId: 'proj_abc123' });
 
     const result = await runInit('http://localhost:3000', { cwd: tmpDir });
+
     expect(result.exitCode).toBe(0);
 
     const config = JSON.parse(
       readFileSync(join(tmpDir, '.ripe/config.json'), 'utf-8')
     ) as { projectId: string; serverUrl: string };
+
     expect(config.projectId).toBe('proj_abc123');
     expect(config.serverUrl).toBe('http://localhost:3000');
   });
@@ -66,9 +73,11 @@ describe('runInit', () => {
     });
 
     expect(result.exitCode).toBe(0);
+
     const config = JSON.parse(
       readFileSync(join(tmpDir, '.ripe/config.json'), 'utf-8')
     ) as { projectId: string };
+
     expect(config.projectId).toBe('proj_existing');
   });
 
@@ -91,10 +100,9 @@ describe('runInit', () => {
       .post('/api/projects')
       .replyWithError('connect ECONNREFUSED 127.0.0.1:3000');
 
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const result = await runInit('http://localhost:3000', { cwd: tmpDir });
+
     expect(result.exitCode).toBe(1);
     expect(errorSpy).toHaveBeenCalled();
-    errorSpy.mockRestore();
   });
 });

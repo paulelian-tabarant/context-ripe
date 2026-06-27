@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint-typecheck-test:
+  lint-typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,16 +36,48 @@ jobs:
       - name: Typecheck cli
         run: pnpm --filter ./cli typecheck
 
+  test-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.8.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
       - name: Test api
         run: pnpm --filter api test
         env:
           DATABASE_PATH: /tmp/test.db
 
+  test-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.8.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
       - name: Test cli
         run: pnpm --filter ./cli test
 
   deploy-staging:
-    needs: lint-typecheck-test
+    needs: [lint-typecheck, test-api, test-cli]
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
