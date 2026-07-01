@@ -58,14 +58,16 @@ instead of relying on the hosted version.
 **Changes**:
 
 - **Docker image**: single image containing the server + compiled frontend assets, exposed on a configurable port
-- **Environment-based configuration**: database path, port, CORS origins configurable via env vars (no hardcoded Railway URLs)
+- **Environment-based configuration**: database path, port, CORS origins configurable via env vars
+  (no hardcoded Railway URLs)
 - **Documentation**: deployment guide covering Docker run, docker-compose, and common PaaS platforms (Fly.io, Railway, Render)
 - **Health check endpoint**: `GET /health` for orchestrators and uptime monitors
 
 **Why**: lowers barrier to adoption for teams with data residency requirements, on-prem mandates, or who prefer self-hosting.
 The hosted version remains the default/recommended option for most users.
 
-**Testing note**: verify the Docker image boots cleanly, serves the frontend, and handles requests with a SQLite file mounted as a volume.
+**Testing note**: verify the Docker image boots cleanly, serves the frontend, and handles requests
+with a SQLite file mounted as a volume.
 
 ---
 
