@@ -35,13 +35,13 @@ describe('runInit', () => {
 
   it('exits 0 with warning when .ripe/config.json already exists', async () => {
     mkdirSync(join(tmpDir, '.ripe'), { recursive: true });
-    writeFileSync(join(tmpDir, '.ripe/config.json'), '{}');
+    writeFileSync(join(tmpDir, '.ripe/config.json'), JSON.stringify({ projectId: 'proj_existing123', serverUrl: 'http://localhost:3000' }));
 
     const result = await runInit('http://localhost:3000', { currentDirectoryName: tmpDir });
 
     expect(result.exitCode).toBe(0);
     expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('already exists')
+      expect.stringContaining('proj_existing123')
     );
   });
 
