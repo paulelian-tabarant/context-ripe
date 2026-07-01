@@ -79,15 +79,6 @@ jobs:
 
   deploy-staging:
     needs: [lint-typecheck, test-api, test-cli]
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'deploy-staging')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Deploy to staging
-        run: railway up --service=backend-staging --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    uses: ./.github/workflows/deploy-staging.yml
+    secrets: inherit

@@ -1,9 +1,7 @@
 name: Deploy to Staging
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
 
 jobs:
   deploy:
@@ -15,6 +13,6 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Deploy to staging
-        run: railway up --service=backend-staging --detach
+        run: railway up --environment staging --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
